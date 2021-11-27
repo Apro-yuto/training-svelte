@@ -1,35 +1,58 @@
 <script>
-  import { todo } from '../stores/todo'
+  import { todos } from '../stores/todo'
 
   let text = ''
-  const registerTodo = () => {
-    $todo = [...$todo, {text, 'isDone': false}]
+  let errorMessage = ''
 
+  const registerTodo = () => {
+    if(text === '') {
+      errorMessage = 'TODOが入力されていません。TODOを入力してください。'
+      return
+    }
+    const id = $todos.length + 1
+
+    errorMessage = ''
+    todos.update((todo) => {
+      return [...todo, {id, text, 'isDone': false}]
+    })
     text = ''
   }
+
 </script>
 
-<form class="main_form">
-<input
-  bind:value={text}
-  class="main_form_txt"
-  type="text"
-  placeholder="TODO">
-  <button
-    on:click={registerTodo}
-    class="main_form_submit"
-    type="button">
-    追加
-  </button>
-{$todo}
-</form>
+<div class="main_form">
+  {#if errorMessage}
+    <p class="main_form_error">{errorMessage}</p>
+  {/if}
+  <form class="main_form_body">
+    <input
+      bind:value={text}
+      class="main_form_txt"
+      type="text"
+      placeholder="TODO">
+    <button
+      on:click={registerTodo}
+      class="main_form_submit"
+      type="button">
+      追加
+    </button>
+  </form>
+</div>
 
 <style>
-  .main_form {
+.main_form {
   width: 800px;
   margin: 100px auto 0;
+}
+.main_form_body {
   display: flex;
   justify-content: space-between;
+}
+.main_form_error {
+  padding: 0 0 5px 5px;
+  font-size: 14px;
+  font-weight: 100;
+  color: #ff5c5c;
 }
 .main_form_txt {
   width: 700px;
